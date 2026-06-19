@@ -3,29 +3,27 @@
 #include <algorithm>
 using namespace std;
 
-// Function to find all unique triplets with sum = 0
-vector<vector<int>> threeSum(vector<int> &arr)
+// Function to find all unique quadruplets with sum = target
+vector<vector<int>> fourSum(vector<int> &arr, int target)
 {
     // -------------------- INTUITION --------------------
     //
+    // Similar to 3 Sum.
+    //
     // Step 1: Sort the array.
     //
-    // Step 2: Fix one element (arr[i]).
+    // Step 2: Fix the first element (i).
     //
-    // Step 3: Use two pointers:
-    //         left  = i + 1
+    // Step 3: Fix the second element (j).
+    //
+    // Step 4: Use two pointers:
+    //         left = j + 1
     //         right = n - 1
     //
-    // If sum < 0:
-    //      Move left++
+    // Compare:
+    // arr[i] + arr[j] + arr[left] + arr[right]
     //
-    // If sum > 0:
-    //      Move right--
-    //
-    // If sum == 0:
-    //      Store the triplet.
-    //      Skip duplicates.
-    //      Move both pointers.
+    // Skip duplicates at every level.
 
     vector<vector<int>> ans;
 
@@ -40,35 +38,46 @@ vector<vector<int>> threeSum(vector<int> &arr)
         if (i > 0 && arr[i] == arr[i - 1])
             continue;
 
-        int left = i + 1;
-        int right = n - 1;
-
-        while (left < right)
+        for (int j = i + 1; j < n; j++)
         {
-            int sum = arr[i] + arr[left] + arr[right];
+            // Skip duplicate second elements
+            if (j > i + 1 && arr[j] == arr[j - 1])
+                continue;
 
-            if (sum < 0)
-            {
-                left++;
-            }
-            else if (sum > 0)
-            {
-                right--;
-            }
-            else
-            {
-                ans.push_back({arr[i], arr[left], arr[right]});
+            int left = j + 1;
+            int right = n - 1;
 
-                left++;
-                right--;
+            while (left < right)
+            {
+                // Use long long to avoid integer overflow
+                long long sum = (long long)arr[i] +
+                                arr[j] +
+                                arr[left] +
+                                arr[right];
 
-                // Skip duplicate second elements
-                while (left < right && arr[left] == arr[left - 1])
+                if (sum < target)
+                {
                     left++;
-
-                // Skip duplicate third elements
-                while (left < right && arr[right] == arr[right + 1])
+                }
+                else if (sum > target)
+                {
                     right--;
+                }
+                else
+                {
+                    ans.push_back({arr[i], arr[j], arr[left], arr[right]});
+
+                    left++;
+                    right--;
+
+                    // Skip duplicate third elements
+                    while (left < right && arr[left] == arr[left - 1])
+                        left++;
+
+                    // Skip duplicate fourth elements
+                    while (left < right && arr[right] == arr[right + 1])
+                        right--;
+                }
             }
         }
     }
@@ -78,15 +87,16 @@ vector<vector<int>> threeSum(vector<int> &arr)
 
 int main()
 {
-    vector<int> arr = {-1, 0, 1, 2, -1, -4};
+    vector<int> arr = {1, 0, -1, 0, -2, 2};
+    int target = 0;
 
     // Only function call
-    vector<vector<int>> ans = threeSum(arr);
+    vector<vector<int>> ans = fourSum(arr, target);
 
-    // Print triplets
-    for (auto &triplet : ans)
+    // Print quadruplets
+    for (auto &quad : ans)
     {
-        for (int num : triplet)
+        for (int num : quad)
         {
             cout << num << " ";
         }
@@ -102,8 +112,8 @@ STRIVER'S INTUITION
 =========================
 
 Goal:
-Find all UNIQUE triplets
-whose sum is 0.
+Find all UNIQUE quadruplets
+whose sum equals target.
 
 --------------------------------------
 
@@ -112,77 +122,85 @@ Sort the array.
 
 Example:
 
-[-1, 0, 1, 2, -1, -4]
+[1,0,-1,0,-2,2]
 
 ↓
 
-[-4, -1, -1, 0, 1, 2]
+[-2,-1,0,0,1,2]
 
 --------------------------------------
 
-Fix one element.
+Fix first element (i).
 
-Suppose i = -1
+Fix second element (j).
 
-Now search for:
+Now solve:
 
-left + right = +1
-
+2-Sum on the remaining array
 using Two Pointers.
 
 --------------------------------------
 
-Rules:
+Use:
 
-sum < 0
+left = j + 1
+right = n - 1
+
+sum = arr[i] + arr[j]
+    + arr[left] + arr[right]
+
+If sum < target
     -> left++
 
-sum > 0
+If sum > target
     -> right--
 
-sum == 0
+If sum == target
     -> Store answer
-    -> left++
-    -> right--
+    -> Move both pointers
     -> Skip duplicates
 
 --------------------------------------
 
-Why skip duplicates?
+IMPORTANT:
 
-Input:
-
-[-1, -1, 0, 1]
-
-Without skipping,
-same triplet gets added twice.
+Use long long while computing sum
+to avoid integer overflow.
 
 --------------------------------------
 
-Time Complexity :
+Time Complexity:
 
-Sorting = O(n log n)
+Sorting      -> O(n log n)
 
-Loop + Two Pointers = O(n²)
+Outer loops  -> O(n²)
 
-Overall = O(n²)
+Two pointers -> O(n)
 
-Space Complexity :
+Overall:
+
+O(n³)
+
+Space Complexity:
 
 O(1)
-(excluding output array)
+(excluding output)
 
 Memory Trick:
 
-Sort first.
+4 Sum =
 
-Fix one number.
-
-Then solve 2-Sum
-using Two Pointers.
+Fix first element
++
+Fix second element
++
+Solve 2-Sum
 
 Remember:
 
-Fix → Left → Right
-Skip duplicates.
+Sort
+→ Fix i
+→ Fix j
+→ Left & Right
+→ Skip duplicates
 */
