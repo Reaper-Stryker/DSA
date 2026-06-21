@@ -14,7 +14,6 @@ The main purpose of this repository is to:
 The repository includes problems from various topics such as:
 
 * Arrays
-* Strings
 * Linked Lists
 * Stacks & Queues
 * Trees
