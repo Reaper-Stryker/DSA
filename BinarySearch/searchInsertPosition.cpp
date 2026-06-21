@@ -20,3 +20,19 @@ public:
         return low;
     }
 };
+
+int main() {
+    Solution sol;
+    vector<int> nums = {1, 3, 5, 6};
+    int target = 5;
+
+    cout << sol.searchInsert(nums, target) << endl; // expected 2
+
+    target = 2;
+    cout << sol.searchInsert(nums, target) << endl; // expected 1
+
+    target = 7;
+    cout << sol.searchInsert(nums, target) << endl; // expected 4
+
+    return 0;
+}
